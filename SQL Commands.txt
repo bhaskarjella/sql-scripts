@@ -35,7 +35,7 @@ ORDER BY
     db.name, mf.type_desc;
 #####################################################
 
-################DB Count ##################################
+################Total DB Count##################################
 
 SELECT 
     COUNT(db.database_id) AS DatabaseCount
