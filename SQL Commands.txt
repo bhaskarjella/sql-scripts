@@ -1,0 +1,46 @@
+#######TO DROP A USER#########
+
+SELECT s.name AS SchemaName, u.name AS SchemaOwner
+FROM sys.schemas s
+JOIN sys.database_principals u ON s.principal_id = u.principal_id
+WHERE u.name = 'dbo';
+
+ALTER AUTHORIZATION ON SCHEMA::db_owner TO dbo;
+ALTER AUTHORIZATION ON SCHEMA::db_datareader TO dbo;
+
+DROP USER [CGG\syed.z];
+
+##############################
+
+
+############LDF MDF File path and their size#################
+
+SELECT 
+    db.name AS DatabaseName,
+    mf.name AS LogicalName,
+    mf.type_desc AS FileType,
+    mf.physical_name AS FilePath,
+    CASE 
+        WHEN mf.size * 8 / 1024.0 < 1024 
+            THEN FORMAT(ROUND(mf.size * 8 / 1024.0, 2), '0.00') + ' MB'
+        ELSE FORMAT(ROUND(mf.size * 8 / 1024.0 / 1024.0, 2), '0.00') + ' GB'
+    END AS FileSize
+FROM 
+    sys.databases db
+JOIN 
+    sys.master_files mf ON db.database_id = mf.database_id
+WHERE 
+    db.state_desc = 'ONLINE'  -- Only show databases that are online
+ORDER BY 
+    db.name, mf.type_desc;
+#####################################################
+
+################DB Count ##################################
+
+SELECT 
+    COUNT(db.database_id) AS DatabaseCount
+FROM 
+    sys.databases db
+WHERE 
+    db.state_desc = 'ONLINE';  -- Only count databases that are online
+###############################
